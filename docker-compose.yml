@@ -1,0 +1,42 @@
+version: '3.4'
+
+services:
+  image-service:
+    build:
+      context: ./ImageService  # Path to the ImageService project
+      dockerfile: Dockerfile
+    ports:
+      - "49155:80"  # Expose port 49155 to localhost for ImageService
+    networks:
+      - backend
+
+  order-service:
+    build:
+      context: ./OrderService  # Path to the OrderService project
+      dockerfile: Dockerfile
+    ports:
+      - "49156:80"  # Expose port 49156 to localhost for OrderService
+    networks:
+      - backend
+
+  product-service:
+    build:
+      context: ./ProductService  # Path to the ProductService project
+      dockerfile: Dockerfile
+    ports:
+      - "49157:80"  # Expose port 49157 to localhost for ProductService
+    networks:
+      - backend
+
+  review-service:
+    build:
+      context: ./ReviewService  # Path to the ReviewService project
+      dockerfile: Dockerfile
+    ports:
+      - "49158:80"  # Expose port 49158 to localhost for ReviewService
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
