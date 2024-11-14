@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProductService.Services;
-using ProductService.Models;
 using ProductService.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace ProductService.Controllers
 {
@@ -11,19 +11,17 @@ namespace ProductService.Controllers
     {
         private readonly IProductService _productService;
 
-        public ProductController(IProductService imageService)
+        public ProductController(IProductService productService)
         {
-            _productService = imageService;
+            _productService = productService;
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(Guid id) =>
+            Ok(await _productService.GetProductByIdAsync(id));
+
         [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var products = new List<Product>()
-            {
-                new Product { ProductId = Guid.NewGuid(), Name = "Product 1", Status = "Pending" },
-            };
-            return Ok(products);
-        }
+        public async Task<IActionResult> GetAllProducts() =>
+            Ok(await _productService.GetAllProductsAsync());
     }
 }

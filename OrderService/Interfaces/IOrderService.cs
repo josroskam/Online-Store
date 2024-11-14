@@ -5,7 +5,8 @@ namespace OrderService.Interfaces
     public interface IOrderService
     {
         Task<Order> CreateOrderAsync(Order order);
-        Task<Order> GetOrderByIdAsync(Guid orderId);
-        Task UpdateOrderStatusAsync(Guid orderId, string status);
+        Task<Order> GetOrderByIdAsync(Guid id);
+        Task<IEnumerable<Order>> GetAllOrdersAsync();
+        Task UpdateOrderStatusAsync(Guid id, string status);
     }
 }

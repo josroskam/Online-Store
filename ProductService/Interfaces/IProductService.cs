@@ -3,10 +3,9 @@ using ProductService.Models;
 
 namespace ProductService.Interfaces
 {
-    public interface IProductService 
+    public interface IProductService
     {
-        Task<Product> CreateProductAsync(Product product);
-        Task<Product> GetProductByIdAsync(Guid productId);
-        Task UpdateProductStatusAsync(Guid productId, string status);
+        Task<Product> GetProductByIdAsync(Guid id);
+        Task<IEnumerable<Product>> GetAllProductsAsync();
     }
 }

@@ -1,11 +1,12 @@
 ﻿using ReviewService.Models;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ReviewService.Interfaces
 {
     public interface IReviewService
     {
-        Task<Review> CreateReviewAsync(Review review);
-        Task<Review> GetReviewByIdAsync(Guid reviewId);
-        Task UpdateReviewStatusAsync(Guid reviewId, string status);
+        Task<IEnumerable<Review>> GetReviewsForProductAsync(Guid productId);
     }
 }

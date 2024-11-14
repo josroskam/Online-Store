@@ -1,11 +1,12 @@
-﻿namespace ReviewService.Models
+﻿using System;
+
+namespace ReviewService.Models
 {
     public class Review
     {
-        public Guid ReviewId { get; set; }
-        public Guid ProductId { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
+        public Guid Id { get; set; }
+        public string ProductId { get; set; }
+        public string Content { get; set; }
         public int Rating { get; set; }
     }
 }

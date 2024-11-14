@@ -5,21 +5,31 @@ namespace OrderService.Services
 {
     public class OrderService : IOrderService
     {
-        public OrderService() { }
+        private readonly List<Order> _orders = new();
 
-        public Task<Order> CreateOrderAsync(Order order)
+        public async Task<Order> CreateOrderAsync(Order order)
         {
-            throw new NotImplementedException();
+            order.Id = Guid.NewGuid();
+            order.OrderDate = DateTime.UtcNow;
+            _orders.Add(order);
+            return await Task.FromResult(order);
         }
 
-        public Task<Order> GetOrderByIdAsync(Guid orderId)
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<Order> GetOrderByIdAsync(Guid id) =>
+            await Task.FromResult(_orders.FirstOrDefault(o => o.Id == id));
 
-        public Task UpdateOrderStatusAsync(Guid orderId, string status)
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync() =>
+            await Task.FromResult(_orders);
+
+        public async Task UpdateOrderStatusAsync(Guid id, string status)
         {
-            throw new NotImplementedException();
+            var order = _orders.FirstOrDefault(o => o.Id == id);
+            if (order != null)
+            {
+                order.Status = status;
+                if (status == "Shipped") order.ShippingDate = DateTime.UtcNow;
+            }
+            await Task.CompletedTask;
         }
     }
 }

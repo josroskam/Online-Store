@@ -16,29 +16,15 @@ namespace OrderService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] Order order)
-        {
-            var createdOrder = await _orderService.CreateOrderAsync(order);
-            return CreatedAtAction(nameof(GetOrderById), new { id = createdOrder.Id }, createdOrder);
-        }
+        public async Task<IActionResult> CreateOrder([FromBody] Order order) =>
+            CreatedAtAction(nameof(GetOrderById), new { id = (await _orderService.CreateOrderAsync(order)).Id }, order);
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetOrderById(Guid id)
-        {
-            var order = await _orderService.GetOrderByIdAsync(id);
-            if (order == null)
-                return NotFound();
-            return Ok(order);
-        }
+        public async Task<IActionResult> GetOrderById(Guid id) =>
+            Ok(await _orderService.GetOrderByIdAsync(id));
 
         [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var orders = new List<Order>()
-            {
-                new Order { Id = Guid.NewGuid(), ProductName = "Product 1", Quantity = 1, Price = 10, Status = "Pending" },
-            };
-            return Ok(orders);
-        }
+        public async Task<IActionResult> GetAllOrders() =>
+            Ok(await _orderService.GetAllOrdersAsync());
     }
 }

@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ImageService.Models;
+﻿using ImageService.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace ImageService.Interfaces
 {
-    public interface IImageService 
+    public interface IImageService
     {
-        Task<Image> CreateImageAsync(Image image);
-        Task<Image> GetImageByIdAsync(Guid imageId);
-        Task UpdateImageStatusAsync(Guid imageId, string status);
+        Task<Image> GetImageByIdAsync(Guid id);
     }
 }
