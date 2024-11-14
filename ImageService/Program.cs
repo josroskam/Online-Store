@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using ImageService.Interfaces;
 using ImageService.Services;
 
 var builder = WebApplication.CreateBuilder(args);

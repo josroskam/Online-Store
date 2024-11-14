@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using OrderService.Interfaces;
+using OrderService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

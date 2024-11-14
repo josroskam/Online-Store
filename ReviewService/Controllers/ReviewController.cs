@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ReviewService.Interfaces;
+using ReviewService.Services;
 using ReviewService.Models;
 
 namespace ReviewService.Controllers
@@ -20,7 +20,7 @@ namespace ReviewService.Controllers
         {
             var reviews = new List<Review>()
             {
-                new Review { ReviewId = Guid.NewGuid(), Title = "Review 1", Rating = 10 },
+                new Review { Id = Guid.NewGuid(), ProductId = "", Content = "Review 1", Rating = 10 },
             };
             return Ok(reviews);
         }

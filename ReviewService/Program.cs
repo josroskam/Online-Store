@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using ReviewService.Interfaces;
+using ReviewService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace ImageService.Interfaces
+namespace ImageService.Services
 {
     public interface IImageService
     {

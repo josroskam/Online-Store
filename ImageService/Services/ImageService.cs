@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ImageService.Models;
-using ImageService.Interfaces;
 
 namespace ImageService.Services
 {

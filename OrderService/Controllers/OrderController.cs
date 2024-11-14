@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using OrderService.Interfaces;
+using OrderService.Services;
 using OrderService.Models;
 
 namespace OrderService.Controllers

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ImageService.Services;
 using ImageService.Models;
-using ImageService.Interfaces;
 
 namespace ImageService.Controllers
 {
@@ -21,7 +20,7 @@ namespace ImageService.Controllers
         {
             var images = new List<Image>()
             {
-                new Image { Id = Guid.NewGuid(), Name = "Image 1", Status = "Pending" },
+                new Image { Id = Guid.NewGuid(), FileName = "Image 1", Data = new byte[1] },
             };
             return Ok(images);
         }
