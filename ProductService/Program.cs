@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using ProductService.Interfaces;
 using ProductService.Models;
+using ProductService.Services;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Register services to the container
 builder.Services.AddScoped<IProductService, ProductService.Services.ProductService>();
+builder.Services.AddHttpClient<IProductService, ProductService.Services.ProductService> ();
+
 builder.Services.AddControllers();  // Register controllers
 
 // Configure Kestrel to listen on all network interfaces (0.0.0.0) and port 80

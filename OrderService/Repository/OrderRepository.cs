@@ -1,30 +1,61 @@
-﻿using OrderService.Models;
-using System;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Azure.Cosmos;
+using OrderService.Models;
 
 namespace OrderService.Repository
 {
     public class OrderRepository : IOrderRepository
     {
-        public Task<Order> CreateOrderAsync(Order order)
+        private readonly CosmosClient _cosmosClient;
+        private readonly Container _container;
+
+        public OrderRepository(string connectionString, string databaseName, string containerName)
         {
-            throw new NotImplementedException();
+            _cosmosClient = new CosmosClient(connectionString);
+            _container = _cosmosClient.GetContainer(databaseName, containerName);
         }
 
-        public Task<IEnumerable<Order>> GetAllOrdersAsync()
+        public async Task<Order> CreateOrderAsync(Order order)
         {
-            throw new NotImplementedException();
+            await _container.CreateItemAsync(order, new PartitionKey(order.Id.ToString()));
+            return order;
         }
 
-        public Task<Order> GetOrderByIdAsync(Guid id)
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
-            throw new NotImplementedException();
+            // Query all orders
+            var query = _container.GetItemQueryIterator<Order>("SELECT * FROM c");
+            var results = new List<Order>();
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                results.AddRange(response.ToList());
+            }
+            return results;
         }
 
-        public Task UpdateOrderStatusAsync(Guid id, Order order)
+        public async Task<Order> GetOrderByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            // Retrieve a single order by ID
+            try
+            {
+                var response = await _container.ReadItemAsync<Order>(id.ToString(), new PartitionKey(id.ToString()));
+                return response.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+        }
+
+        public async Task UpdateOrderAsync(Order order)
+        {
+            // Update an existing order
+            await _container.UpsertItemAsync(order, new PartitionKey(Convert.ToInt32(order.Id)));
         }
     }
 }

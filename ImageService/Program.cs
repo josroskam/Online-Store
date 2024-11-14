@@ -1,7 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using ImageService.Services;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Use builder.Configuration to access connection strings
+string blobStorageConnectionString = builder.Configuration.GetConnectionString("BlobStorageConnection");
+
+// Register BlobServiceClient with dependency injection
+builder.Services.AddSingleton(new BlobServiceClient(blobStorageConnectionString));
 
 // Register services to the container
 builder.Services.AddScoped<IImageService, ImageService.Services.ImageService>();

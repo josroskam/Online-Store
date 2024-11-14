@@ -8,6 +8,7 @@
         public decimal Price { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime? ShippingDate { get; set; }
-        public string Status { get; set; }  
+        public OrderStatus Status { get; set; }  
+        public string CustomerEmail { get; set; }
     }
 }

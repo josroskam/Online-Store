@@ -1,6 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ImageService.Services;
 using ImageService.Models;
+using Azure.Storage.Blobs;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace ImageService.Controllers
 {
@@ -9,10 +14,12 @@ namespace ImageService.Controllers
     public class ImageController : ControllerBase
     {
         private readonly IImageService _imageService;
+        private readonly BlobServiceClient _blobServiceClient;
 
-        public ImageController(IImageService imageService)
+        public ImageController(IImageService imageService, BlobServiceClient blobServiceClient)
         {
             _imageService = imageService;
+            _blobServiceClient = blobServiceClient;
         }
 
         [HttpGet]
@@ -24,5 +31,13 @@ namespace ImageService.Controllers
             };
             return Ok(images);
         }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> UploadImage([FromForm] string blobId, [FromForm] IFormFile image)
+        {
+            var blobUrl = await _imageService.UploadImageAsync(blobId, image);
+            return Ok(blobUrl); // Return the URL or ID of the stored blob
+        }
+
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProductService.Interfaces;
+using ProductService.Models;
+using ProductService.Services;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ProductService.Controllers
@@ -23,5 +25,17 @@ namespace ProductService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllProducts() =>
             Ok(await _productService.GetAllProductsAsync());
+
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct([FromForm] Product product, [FromForm] IFormFile image, CancellationToken cancellationToken)
+        {
+            if (image == null || image.Length == 0)
+                return BadRequest("Image is required.");
+
+            using var imageStream = image.OpenReadStream();
+            var createdProduct = await _productService.CreateProductAsync(product, imageStream, cancellationToken);
+
+            return Ok(createdProduct);
+        }
     }
 }
