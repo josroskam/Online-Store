@@ -1,30 +1,63 @@
-﻿using ReviewService.Services;
-using ReviewService.Models;
+﻿using ReviewService.Models;
+using ReviewService.Repository;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ReviewService.Services
 {
     public class ReviewService : IReviewService
     {
-        public ReviewService() { }
+        private readonly IReviewRepository _reviewRepository;
 
-        public Task<Review> CreateReviewAsync(Review review)
+        public ReviewService(IReviewRepository reviewRepository)
         {
-            throw new NotImplementedException();
+            _reviewRepository = reviewRepository;
         }
 
-        public Task<Review> GetReviewByIdAsync(Guid reviewId)
+        public async Task<Review> CreateReviewAsync(Review review)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(review.ProductId))
+            {
+                throw new ArgumentException("ProductId cannot be null or empty.");
+            }
+
+            if (review.Rating < 1 || review.Rating > 5)
+            {
+                throw new ArgumentException("Rating must be between 1 and 5.");
+            }
+
+            return await _reviewRepository.CreateReviewAsync(review);
         }
 
-        public Task<IEnumerable<Review>> GetReviewsForProductAsync(Guid productId)
+        public async Task<Review> GetReviewByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await _reviewRepository.GetReviewByIdAsync(id);
         }
 
-        public Task UpdateReviewStatusAsync(Guid reviewId, Review review)
+        public async Task<IEnumerable<Review>> GetReviewsByProductIdAsync(string productId)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrEmpty(productId))
+            {
+                throw new ArgumentException("ProductId cannot be null or empty.");
+            }
+
+            return await _reviewRepository.GetReviewsByProductIdAsync(productId);
+        }
+
+        public async Task UpdateReviewAsync(Guid id, Review review)
+        {
+            if (string.IsNullOrEmpty(review.ProductId))
+            {
+                throw new ArgumentException("ProductId cannot be null or empty.");
+            }
+
+            await _reviewRepository.UpdateReviewAsync(id, review);
+        }
+
+        public async Task DeleteReviewAsync(Guid id)
+        {
+            await _reviewRepository.DeleteReviewAsync(id);
         }
     }
 }

@@ -15,10 +15,10 @@ namespace ProductService.Services
         private readonly HttpClient _httpClient;
         private readonly IProductRepository _productRepository;
 
-        public ProductService(HttpClient httpClient)
+        public ProductService(IProductRepository productRepository, HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _productRepository = new ProductRepository();
+            _productRepository = productRepository;
 
             // Add default products for testing
             _products.Add(new Product { Id = Guid.NewGuid(), Name = "Widget A", Price = 10.0m });

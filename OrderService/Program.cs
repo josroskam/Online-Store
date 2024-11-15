@@ -14,7 +14,7 @@ string containerName = cosmosDbConfig["ContainerName"];
 // Register services to the container
 builder.Services.AddScoped<IOrderService, OrderService.Services.OrderService>();
 builder.Services.AddScoped<IOrderRepository>(provider =>
-    new OrderRepository(connectionString, databaseName, containerName));  // Register OrderRepository with Cosmos DB settings
+    new OrderRepository(connectionString, databaseName, containerName));  
 
 builder.Services.AddControllers();  // Register controllers
 

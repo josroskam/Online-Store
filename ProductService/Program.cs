@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ProductService.Models;
+using ProductService.Repository;
 using ProductService.Services;
 using System;
 
@@ -8,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Register services to the container
 builder.Services.AddScoped<IProductService, ProductService.Services.ProductService>();
 builder.Services.AddHttpClient<IProductService, ProductService.Services.ProductService> ();
+
+builder.Services.AddScoped<IProductRepository>(provider =>
+    new ProductRepository(builder.Configuration.GetConnectionString("CosmosDb")));
+
 
 builder.Services.AddControllers();  // Register controllers
 

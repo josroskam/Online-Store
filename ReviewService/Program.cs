@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ProductService.Repository;
 using ReviewService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Register services to the container
 builder.Services.AddScoped<IReviewService, ReviewService.Services.ReviewService>();
 builder.Services.AddControllers();  // Register controllers
+
+builder.Services.AddScoped<IProductRepository>(provider =>
+    new ProductRepository(builder.Configuration.GetConnectionString("CosmosDb")));
 
 // Configure Kestrel to listen on all network interfaces (0.0.0.0) and port 80
 builder.WebHost.ConfigureKestrel(options =>

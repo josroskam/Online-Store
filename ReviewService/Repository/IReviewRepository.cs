@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ReviewService.Services
+namespace ReviewService.Repository
 {
-    public interface IReviewService
+    public interface IReviewRepository
     {
         Task<Review> CreateReviewAsync(Review review);
         Task<Review> GetReviewByIdAsync(Guid id);
