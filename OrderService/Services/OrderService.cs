@@ -4,6 +4,7 @@ using OrderService.Models;
 using OrderService.Repository;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace OrderService.Services
@@ -37,18 +38,27 @@ namespace OrderService.Services
             };
 
             string messageJson = JsonConvert.SerializeObject(notificationMessage);
-            await _queueClient.SendMessageAsync(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(messageJson)));
+            await _queueClient.SendMessageAsync(Convert.ToBase64String(Encoding.UTF8.GetBytes(messageJson)));
 
             return order;
         }
 
-        public async Task<Order> GetOrderByIdAsync(Guid id) =>
-            await _orderRepository.GetOrderByIdAsync(id);
+        public async Task<Order> GetOrderByIdAsync(Guid id)
+        {
+            return await _orderRepository.GetOrderByIdAsync(id);
+        }
 
-        public async Task<IEnumerable<Order>> GetAllOrdersAsync() =>
-            await _orderRepository.GetAllOrdersAsync();
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        {
+            return await _orderRepository.GetAllOrdersAsync();
+        }
 
-        public async Task UpdateOrderStatusAsync(Guid id, string status)
+        public async Task<IEnumerable<Order>> GetOrdersAsync(int page, int pageSize)
+        {
+            return await _orderRepository.GetOrdersByPageAsync(page, pageSize);
+        }
+
+        public async Task UpdateOrderStatusAsync(Guid id, OrderStatus status)
         {
             var order = await _orderRepository.GetOrderByIdAsync(id);
 
@@ -56,15 +66,12 @@ namespace OrderService.Services
             {
                 throw new Exception($"Order with ID {id} not found.");
             }
-                         
 
-            // if statement on enum status
-            if (order.Status == OrderStatus.Shipped)
+            order.Status = status;
+
+            if (status == OrderStatus.Shipped)
             {
                 order.ShippingDate = DateTime.UtcNow;
-
-                // Update the order in the database
-                await _orderRepository.UpdateOrderAsync(order);
 
                 // Send a "Shipped" notification to the queue
                 var notificationMessage = new
@@ -75,8 +82,11 @@ namespace OrderService.Services
                 };
 
                 string messageJson = JsonConvert.SerializeObject(notificationMessage);
-                await _queueClient.SendMessageAsync(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(messageJson)));
+                await _queueClient.SendMessageAsync(Convert.ToBase64String(Encoding.UTF8.GetBytes(messageJson)));
             }
+
+            // Update the order in the database
+            await _orderRepository.UpdateOrderAsync(order);
         }
     }
 }

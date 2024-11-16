@@ -8,8 +8,9 @@ namespace OrderService.Repository
     public interface IOrderRepository
     {
         Task<Order> CreateOrderAsync(Order order);
-        Task<Order> GetOrderByIdAsync(Guid id);
         Task<IEnumerable<Order>> GetAllOrdersAsync();
+        Task<IEnumerable<Order>> GetOrdersByPageAsync(int page, int pageSize);
+        Task<Order> GetOrderByIdAsync(Guid id);
         Task UpdateOrderAsync(Order order);
     }
 }

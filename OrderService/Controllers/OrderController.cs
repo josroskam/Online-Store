@@ -26,5 +26,11 @@ namespace OrderService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllOrders() =>
             Ok(await _orderService.GetAllOrdersAsync());
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 200)
+        {
+            return (IActionResult)await _orderService.GetOrdersAsync(page, pageSize);
+        }
     }
 }
