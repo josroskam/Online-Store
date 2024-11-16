@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ImageService.Services;
-using ImageService.Models;
-using Azure.Storage.Blobs;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using ImageService.Services;
+using System.Threading.Tasks;
 
 namespace ImageService.Controllers
 {
@@ -14,30 +10,41 @@ namespace ImageService.Controllers
     public class ImageController : ControllerBase
     {
         private readonly IImageService _imageService;
-        private readonly BlobServiceClient _blobServiceClient;
 
-        public ImageController(IImageService imageService, BlobServiceClient blobServiceClient)
+        public ImageController(IImageService imageService)
         {
             _imageService = imageService;
-            _blobServiceClient = blobServiceClient;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Get()
-        {
-            var images = new List<Image>()
-            {
-                new Image { Id = Guid.NewGuid(), FileName = "Image 1", Data = new byte[1] },
-            };
-            return Ok(images);
         }
 
         [HttpPost("upload")]
         public async Task<IActionResult> UploadImage([FromForm] string blobId, [FromForm] IFormFile image)
         {
+            if (image == null || image.Length == 0)
+                return BadRequest("Invalid image file.");
+
             var blobUrl = await _imageService.UploadImageAsync(blobId, image);
-            return Ok(blobUrl); // Return the URL or ID of the stored blob
+            return Ok(new { BlobUrl = blobUrl });
         }
 
+        [HttpGet("{blobId}")]
+        public async Task<IActionResult> GetImage(string blobId)
+        {
+            try
+            {
+                var imageData = await _imageService.GetImageAsync(blobId);
+                return File(imageData, "application/octet-stream");
+            }
+            catch
+            {
+                return NotFound($"Image with ID {blobId} not found.");
+            }
+        }
+
+        [HttpDelete("{blobId}")]
+        public async Task<IActionResult> DeleteImage(string blobId)
+        {
+            await _imageService.DeleteImageAsync(blobId);
+            return NoContent();
+        }
     }
 }

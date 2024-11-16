@@ -1,33 +1,56 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using ImageService.Models;
-using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ImageService.Services
 {
     public class ImageService : IImageService
     {
         private readonly BlobServiceClient _blobServiceClient;
+        private readonly string _containerName = "images";
 
         public ImageService(BlobServiceClient blobServiceClient)
         {
             _blobServiceClient = blobServiceClient;
         }
 
-        public Task<Image> GetImageByIdAsync(Guid id)
+        public async Task<string> UploadImageAsync(string blobId, IFormFile image)
         {
-            throw new NotImplementedException();
-        }
+            var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            await containerClient.CreateIfNotExistsAsync(PublicAccessType.Blob);
 
-        Task<Image> IImageService.UploadImageAsync(string blobId, IFormFile image)
-        {
-            var containerClient = _blobServiceClient.GetBlobContainerClient("images");
             var blobClient = containerClient.GetBlobClient(blobId);
 
             using (var stream = image.OpenReadStream())
             {
-                blobClient.Upload(stream, true);
+                await blobClient.UploadAsync(stream, true);
             }
-            return Task.FromResult(new Image { Id = Guid.NewGuid(), FileName = blobId });
+
+            return blobClient.Uri.ToString(); // Return the blob's URL
+        }
+
+        public async Task<byte[]> GetImageAsync(string blobId)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobClient = containerClient.GetBlobClient(blobId);
+
+            using (var stream = new MemoryStream())
+            {
+                await blobClient.DownloadToAsync(stream);
+                return stream.ToArray();
+            }
+        }
+
+        public async Task DeleteImageAsync(string blobId)
+        {
+            var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobClient = containerClient.GetBlobClient(blobId);
+
+            await blobClient.DeleteIfExistsAsync();
         }
     }
 }

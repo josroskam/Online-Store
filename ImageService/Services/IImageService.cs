@@ -1,5 +1,4 @@
-﻿using ImageService.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
 
@@ -7,7 +6,8 @@ namespace ImageService.Services
 {
     public interface IImageService
     {
-        Task<Image> GetImageByIdAsync(Guid id);
-        Task<Image> UploadImageAsync(string blobId, [FromForm] IFormFile image);
+        Task<string> UploadImageAsync(string blobId, IFormFile image);
+        Task<byte[]> GetImageAsync(string blobId);
+        Task DeleteImageAsync(string blobId);
     }
 }
